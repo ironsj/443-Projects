@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "274/3A49dR+A2rP3Q0SCKLCHuuTfP7jXyGwOew8OlNqYunZB6H7jScnPnvqJeJ1TEgQ+iulVC96nrT7XnR1uoQ==",
+  "dgSpecHash": "N4BZ8nUl4PmJ94QQy6yJBz4OdFptcXaaOTQBlEOU+26SBu9owGVISk0SGmH3qR3T2Skhmkky6bfQG535ZJC0aw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\jakei\\OneDrive\\Desktop\\SchoolFolders\\443\\Checklist\\MyChecklist\\MyChecklist\\MyChecklist.csproj",
+  "projectFilePath": "C:\\Users\\jakei\\OneDrive\\Desktop\\SchoolFolders\\443\\443-Projects\\MyChecklist\\MyChecklist\\MyChecklist.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\jakei\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\jakei\\.nuget\\packages\\messagepack\\2.1.152\\messagepack.2.1.152.nupkg.sha512",

@@ -9426,11 +9426,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\jakei\\OneDrive\\Desktop\\SchoolFolders\\443\\Checklist\\MyChecklist\\MyChecklist\\MyChecklist.csproj",
+      "projectUniqueName": "C:\\Users\\jakei\\OneDrive\\Desktop\\SchoolFolders\\443\\443-Projects\\MyChecklist\\MyChecklist\\MyChecklist.csproj",
       "projectName": "MyChecklist",
-      "projectPath": "C:\\Users\\jakei\\OneDrive\\Desktop\\SchoolFolders\\443\\Checklist\\MyChecklist\\MyChecklist\\MyChecklist.csproj",
+      "projectPath": "C:\\Users\\jakei\\OneDrive\\Desktop\\SchoolFolders\\443\\443-Projects\\MyChecklist\\MyChecklist\\MyChecklist.csproj",
       "packagesPath": "C:\\Users\\jakei\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\jakei\\OneDrive\\Desktop\\SchoolFolders\\443\\Checklist\\MyChecklist\\MyChecklist\\obj\\",
+      "outputPath": "C:\\Users\\jakei\\OneDrive\\Desktop\\SchoolFolders\\443\\443-Projects\\MyChecklist\\MyChecklist\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\jakei\\AppData\\Roaming\\NuGet\\NuGet.Config",
