@@ -1,0 +1,93 @@
+﻿@model IEnumerable<MyChecklist.Models.Check>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by name: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">@Html.DisplayNameFor(model => model.Unit)</a>
+            </th>
+@*            <th>
+                @Html.DisplayNameFor(model => model.Sequence)
+            </th>*@
+            <th>
+                @Html.DisplayNameFor(model => model.IsDone)
+            </th>
+@*            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">@Html.DisplayNameFor(model => model.Assignment)</a>
+            </th>*@
+            <th>
+                @Html.DisplayNameFor(model => model.Topic)
+            </th>
+
+
+            <th>
+                @Html.DisplayNameFor(model => model.Task)
+            </th>
+
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]">@Html.DisplayNameFor(model => model.DueDate)</a>
+            </th>
+
+            <th>
+                @Html.DisplayNameFor(model => model.HoursInvested)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Feature)
+            </th>
+            <th></th>
+        </tr>
+
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Unit)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsDone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Topic)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Task)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DueDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.HoursInvested)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Feature)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.CheckID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.CheckID">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.CheckID">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
