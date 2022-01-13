@@ -15,13 +15,10 @@ namespace Birthdays.Data
         {
         }
 
-        //public DbSet<Birthdays.Models.Person> Person { get; set; }
         public DbSet<Birthdays.Models.Person> People { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Person>().ToTable("Person");
-
         }
     }
 }

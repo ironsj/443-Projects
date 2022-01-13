@@ -55,7 +55,7 @@ namespace Birthdays.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PersonID,Name,DateTime")] Person person)
+        public async Task<IActionResult> Create([Bind("PersonID,Name,Birthday")] Person person)
         {
             if (ModelState.IsValid)
             {
@@ -87,7 +87,7 @@ namespace Birthdays.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PersonID,Name,DateTime")] Person person)
+        public async Task<IActionResult> Edit(int id, [Bind("PersonID,Name,Birthday")] Person person)
         {
             if (id != person.PersonID)
             {
