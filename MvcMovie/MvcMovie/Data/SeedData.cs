@@ -64,7 +64,16 @@ namespace MvcMovie.Data
                         Genre = "Biographical Drama",
                         Price = 17.99M,
                         Rating = "PG"
+                    },
+                    new Movie
+                    {
+                        Title = "Austin Powers: The Spy Who Shagged Me",
+                        ReleaseDate = DateTime.Parse("1999-6-08"),
+                        Genre = "Comedy",
+                        Price = 33.00M,
+                        Rating = "PG-13"
                     }
+
                 );
                 context.SaveChanges();
             }
