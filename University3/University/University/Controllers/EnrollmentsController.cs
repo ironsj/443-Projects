@@ -47,10 +47,21 @@ namespace University.Controllers
             return View(enrollment);
         }
 
+        // GET: Enrollments/Enroll
         public IActionResult Enroll(int? studentID)
         {
 
-            ViewData["CourseID"] = new SelectList(_context.Courses, "CourseID", "CourseID");
+            var courseSelection = from d in _context.Courses
+                                  select d;
+
+            var studentIdEnrollments = from e in _context.Enrollments
+                                       .Where(e => e.StudentID == studentID)
+                                       select e;
+            
+            //redefines courseSelection to be any courseID in courseSelection that is not in the enrolled courses for the particular studentID
+            courseSelection = courseSelection.Where(item => !studentIdEnrollments.Any(e => e.CourseID == item.CourseID));
+
+            ViewData["CourseID"] = new SelectList(courseSelection, "CourseID", "CourseID");
             ViewData["StudentID"] = studentID;
             return View();
         }
