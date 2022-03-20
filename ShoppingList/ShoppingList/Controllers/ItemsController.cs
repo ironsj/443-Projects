@@ -293,8 +293,8 @@ namespace ShoppingList.Controllers
                 //  Complete two lines of code to reassign the list Subtotal and Tax
                 // ******************************************************************
 
-               // list.Subtotal ________________________________
-               // list.Tax ____________________________________
+                list.Subtotal -= item.Cost;
+                list.Tax -= item.Tax;
 
                 list.TotalCost = list.Subtotal + list.Tax;
             }
@@ -303,7 +303,7 @@ namespace ShoppingList.Controllers
             //  Remove the appropriate Item from
             //                _context.Items
             // *********************************************
-       //     _context.Items.Remove( ____________  );
+            _context.Items.Remove(item);
 
 
 
