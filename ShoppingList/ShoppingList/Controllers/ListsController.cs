@@ -304,7 +304,7 @@ namespace ShoppingList.Controllers
                 //  For ten points, FIX THIS 1 line of code to remove each of the items from Items
                 // ********************************************************************************
 
-               // _context.Items. _____________________
+               _context.Items.Remove(e);
 
             }
 
