@@ -1,0 +1,139 @@
+﻿@model ShoppingList.Models.List
+
+@{
+    ViewData["Title"] = "List Details";
+}
+
+<h1>Lists Details</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TimeSlot)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TimeSlot)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Shopper.FullName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Shopper.FullName)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Shopper.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Shopper.Email)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ShopperID)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ShopperID)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ListID)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ListID)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TotalCost)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TotalCost)
+        </dd>
+
+
+        <dd class="col-sm-10">
+            <table class="table">
+                <tr>
+                    <th>ItemID</th>
+                    <th>Name</th>
+                    <th>Available</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Cost</th>
+                    <th>TaxRate</th>
+                    <th>Tax</th>
+                    <th>Total</th>
+                </tr>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ItemID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProductName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Available)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Quantity)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UnitPrice)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Cost)
+                        </td>
+                        <td>
+                            @if (item.TaxRate > 0)
+                            {
+                                @Html.DisplayFor(modelItem => item.TaxRate)
+                            }
+                        </td>
+                        <td>
+                            @if (item.Tax > 0)
+                            {
+                                @Html.DisplayFor(modelItem => item.Tax)
+                            }
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => (item.TotalCost))
+                        </td>
+                        <td>
+                            <a asp-action="Delete" asp-controller="Items" asp-route-itemID="@item.ItemID">Remove from list |</a>
+
+                            <a asp-action="Edit" asp-controller="Items" asp-route-itemID="@item.ItemID">Edit item</a>
+                        </td>
+
+                    </tr>
+                }
+
+                <tfoot>
+                    <tr>
+                        <td></td>
+                        <td>Totals</td>
+                        <td></td>
+                        <td>@Model.Items.Count</td>
+                        <td></td>
+                        <td>$@Model.Subtotal</td>
+                        <td></td>
+                        <td>$@Model.Tax</td>
+                        <td>$@Model.TotalCost</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </dd>
+    </dl>
+
+</div>
+<div>
+    <a asp-controller="Shoppers" asp-action="Details" asp-route-shopperID="@Model.ShopperID">Back to Shopper Details </a>
+
+    <a asp-controller="Items" asp-action="Create" asp-route-listID="@Model.ListID"> | Add item </a>
+</div>
+
+

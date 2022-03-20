@@ -1,0 +1,81 @@
+﻿@model IEnumerable<ShoppingList.Models.List>
+
+@{
+    ViewData["Title"] = "Lists Index";
+}
+
+<h1>Lists Index</h1>
+
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            @*       Find by Date, e.g. 3/30/2021: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />*@
+            Find by Email, e.g. user@example.com <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                ListID
+            </th>
+            <th>
+                TimeSlot
+            </th>
+            <th>
+                Subtotal
+            </th>
+            <th>
+                Tax
+            </th>
+            <th>
+                TotalCost
+            </th>
+            <th>
+                Shopper
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ListID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TimeSlot)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Subtotal)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Tax)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalCost)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Shopper.FullName)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-listID="@item.ListID">Edit</a> |
+                    <a asp-action="Details" asp-route-listID="@item.ListID">Details</a> |
+                    <a asp-action="Delete" asp-route-listID="@item.ListID">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

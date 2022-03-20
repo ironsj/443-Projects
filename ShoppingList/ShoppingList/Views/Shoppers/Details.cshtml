@@ -1,0 +1,72 @@
+﻿@model ShoppingList.Models.Shopper
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Shoppers Details</h1>
+
+<div>
+    <h4>Shopper</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FullName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FullName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ShopperID)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ShopperID)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Birthday)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Birthday)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+
+        <dd class="col-sm-10">
+            <table class="table">
+                <tr>
+                    <th>List</th>
+                    <th>ListID</th>
+                </tr>
+                @foreach (var item in Model.Lists)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ListID)
+                        </td>
+                        @*                       <td>
+                            @Html.DisplayFor(modelItem => item.ShopperID)
+                            </td>*@
+                        <td>
+                            <a asp-action="Details" asp-controller="Lists" asp-route-listID="@item.ListID">View Items in List | </a>
+
+                            <a asp-action="Delete" asp-controller="Lists" asp-route-listID="@item.ListID">Delete List</a>
+                        </td>
+                    </tr>
+                }
+            </table>
+        </dd>
+
+
+</div>
+<div>
+    <a asp-action="Create" asp-controller="Lists" asp-route-shopperID="@Model.ShopperID">Create New List</a> |
+    <a asp-action="Index">Back to Shoppers</a>
+</div>
