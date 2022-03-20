@@ -198,26 +198,26 @@ namespace ShoppingList.Controllers
                             // Incrment the properties with the difference
                             // between the current item and the previously storedItem
 
-                           // list.Subtotal ___________________________________
-                           // list.Tax ______________________________________
+                            list.Subtotal += item.Cost - storedItem.Cost;
+                            list.Tax += item.Tax - storedItem.Tax;
                         }
                         else
                         {
-                            // list.Subtotal __________________________________
-                            // list.Tax _______________________________________
+                            list.Subtotal += item.Cost;
+                            list.Tax += item.Tax;
                         }
                     }
                     else if (storedItem.Available)
                     {
-                      //  list.Subtotal ____________________________________
-                      //  list.Tax  ________________________________________
+                        list.Subtotal -= storedItem.Cost;  
+                        list.Tax  -= storedItem.Tax;
                     }
                     list.TotalCost = list.Subtotal + list.Tax;
  
 
                     // Update the context with the edited item
                    
-                    // _context.Update(___________________);
+                     _context.Update(item);
                    // ***********************************************************************************
 
                     await _context.SaveChangesAsync();
