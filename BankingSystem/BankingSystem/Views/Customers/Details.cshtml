@@ -1,0 +1,95 @@
+﻿
+
+@model BankingSystem.Models.Customer
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Customer Details</h1>
+<p>
+    <a asp-action="Create"
+       asp-controller="Accounts"
+       asp-route-customerID="@Model.CustomerID">Create new account</a>
+</p>
+
+<div>
+    <h4>Customer</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CustomerID)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CustomerID)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FullName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FullName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Birthday)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Birthday)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Accounts)
+        </dt>
+        <dd class="col-sm-10">
+            <table class="table">
+                <tr>
+                    <th>Account</th>
+                    <th>Kind</th>
+                    <th>Balance</th>
+                    <th>Interest rate</th>
+                </tr>
+                @foreach (var item in Model.Accounts)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AccountID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Kind)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Balance)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.InterestRate)
+                        </td>
+                        <td>
+                            <a asp-action="Index"
+                               asp-controller="Accounts"
+                               asp-route-searchString="@item.AccountID"
+                               asp-route-enableFilter="@false"
+                               asp-route-customerID= "@item.CustomerID">Transaction</a> |
+
+                            <a asp-action="Move"
+                               asp-controller="Transfers"
+                               asp-route-accountID="@item.AccountID">Transfer</a> |
+
+                            <a asp-action="Index"
+                               asp-controller="Transactions"
+                               asp-route-searchString="@item.AccountID"
+                               asp-route-enableFilter="@false">Transactions</a> |
+
+                            <a asp-action="Index"
+                               asp-controller="Transfers"
+                               asp-route-searchString="@item.AccountID"
+                               asp-route-enableFilter="@false">Transfers</a>
+                        </td>
+                    </tr>
+                }
+            </table>
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Index">Back to Customers Index</a>
+</div>
+

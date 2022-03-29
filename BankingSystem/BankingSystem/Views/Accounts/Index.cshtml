@@ -1,0 +1,113 @@
+﻿@model IEnumerable<BankingSystem.Models.Account>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Accounts Index</h1>
+
+@*@if (!ViewBag.EnableFilter)
+    {<p>
+    <a asp-action="Create">Create New</a>
+    </p>
+    }*@
+
+@if (ViewBag.EnableFilter)
+{
+    <form asp-action="Index" method="get">
+        <div class="form-actions no-color">
+            <p>
+                AccountID: <input type="number" name="SearchString" value="@ViewData["CurrentFilter"]" />
+                <input type="submit" value="Search" class="btn btn-default" /> |
+                <a asp-action="Index">Back to Full List</a>
+            </p>
+        </div>
+    </form>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+
+            @if (ViewBag.EnableFilter)
+            {
+                <th>
+                    <a asp-action="Index"
+                   asp-route-sortOrder="@ViewData["SortByCustomer"]"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   asp-route-enableFilter="@ViewBag.EnableFilter">CustomerID</a>
+                </th>
+            }
+            else
+            {
+                <th>CustomerID</th>
+            }
+            @if (ViewBag.EnableFilter)
+            {
+                <th>
+                    <a asp-action="Index"
+                   asp-route-sortOrder="@ViewData["SortByAccount"]"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   asp-route-enableFilter="@ViewBag.EnableFilter">AcccountID</a>
+                </th>
+            }
+            else
+            {
+                <th>AccountID</th>
+            }
+
+            <th>
+                AccountDate
+            </th>
+            <th>
+                Kind
+            </th>
+            <th>
+                Balance
+            </th>
+            <th>
+                Interest Rate
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Customer.CustomerID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AccountID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AccountDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Kind)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Balance)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.InterestRate)
+                </td>
+                @if (!ViewBag.EnableFilter)
+                {
+                    <td>
+                        <a asp-action="Deposit" asp-controller="Transactions" asp-route-accountID="@item.AccountID">Deposit</a> |
+                        <a asp-action="Withdraw" asp-controller="Transactions" asp-route-accountID="@item.AccountID">Withdraw</a> |
+                        <a asp-action="AddInterest" asp-controller="Transactions" asp-route-accountID="@item.AccountID">Add Interest</a> |
+                        <a asp-action="Move" asp-controller="Transfers" asp-route-accountID="@item.AccountID">Transfer</a> |
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    <a asp-action="Details" asp-controller="Customers" asp-route-customerID="@ViewData["CustomerID"]">Back to Customer Details</a>
+</div>

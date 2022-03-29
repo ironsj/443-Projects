@@ -1,0 +1,48 @@
+﻿@model BankingSystem.Models.Transaction
+
+@{
+    ViewData["Title"] = "AddInterest";
+}
+
+<h1>Add Interest Transaction</h1>
+
+
+@*https://www.learnrazorpages.com/razor-pages/forms/select-lists*@
+@*Razor Select Lists*@
+
+<h4>Transaction</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddInterest">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="AccountID" class="control-label">AccountID:  @ViewBag.AccountID</label>
+                <input asp-for="AccountID" type="hidden" name="AccountID" value=@ViewBag.AccountID />
+            </div>
+            <div class="form-group">
+                <label asp-for="AccountID" class="control-label">Account Balance: @ViewData["PreviousBalance"]</label>
+            </div>
+            <div class="form-group">
+                <label asp-for="AccountID" class="control-label">Interest Rate:  @ViewData["InterestRate"]</label>
+            </div>
+            <div class="form-group">
+                <label asp-for="AccountID" class="control-label">Interest:  @ViewData["Interest"]</label>
+            </div>
+            <div class="form-group">
+                <label asp-for="AccountID" class="control-label">New Balance: @ViewData["PostBalance"]</label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Add Interest" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Details" asp-controller="Customers" asp-route-customerID="@ViewData["CustomerID"]">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
