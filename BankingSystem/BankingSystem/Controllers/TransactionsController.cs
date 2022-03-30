@@ -297,21 +297,23 @@ namespace BankingSystem.Controllers
                     .FirstOrDefault(m => m.AccountID == accountID);
 
                 // Updates the account balance, etc. in the context
-                if(account.Balance > transaction.Amount)
+                if(account.Balance >= transaction.Amount)
                 {
                     account.Balance -= (Decimal)transaction.Amount;
                     transaction.NewBalance = account.Balance;
                     transaction.TimeSlot = System.DateTime.Now;
                     transaction.Action = Transaction.Actions.withdraw;
+
+                    if (ModelState.IsValid)
+                    {
+                        // Adds the modified tranaction parameter to the context and updates the database
+                        _context.Transactions.Add(transaction);
+                        await _context.SaveChangesAsync().ConfigureAwait(true);
+                    }
                 }
                 
 
-                if (ModelState.IsValid)
-                {
-                    // Adds the modified tranaction parameter to the context and updates the database
-                    _context.Transactions.Add(transaction);
-                    await _context.SaveChangesAsync().ConfigureAwait(true);
-                }
+                
                 return RedirectToAction(nameof(Index), "Accounts", new { searchString = account.AccountID, enableFilter = false, customerID = account.CustomerID });
             }
 
