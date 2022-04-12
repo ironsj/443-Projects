@@ -1,4 +1,74 @@
-﻿@model IEnumerable<BankingSystem.Models.Account>
+﻿@*@model IEnumerable<BankingSystem.Models.Account>
+
+    @{
+    ViewData["Title"] = "Index";
+    }
+
+    <h1>Index</h1>
+
+    <p>
+    <a asp-action="Create">Create New</a>
+    </p>
+    <table class="table">
+    <thead>
+    <tr>
+    <th>
+    @Html.DisplayNameFor(model => model.AccountDate)
+    </th>
+    <th>
+    @Html.DisplayNameFor(model => model.Name)
+    </th>
+    <th>
+    @Html.DisplayNameFor(model => model.Kind)
+    </th>
+    <th>
+    @Html.DisplayNameFor(model => model.Balance)
+    </th>
+    <th>
+    @Html.DisplayNameFor(model => model.InterestRate)
+    </th>
+    <th>
+    @Html.DisplayNameFor(model => model.Customer)
+    </th>
+    <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+    <tr>
+    <td>
+    @Html.DisplayFor(modelItem => item.AccountDate)
+    </td>
+    <td>
+    @Html.DisplayFor(modelItem => item.Name)
+    </td>
+    <td>
+    @Html.DisplayFor(modelItem => item.Kind)
+    </td>
+    <td>
+    @Html.DisplayFor(modelItem => item.Balance)
+    </td>
+    <td>
+    @Html.DisplayFor(modelItem => item.InterestRate)
+    </td>
+    <td>
+    @Html.DisplayFor(modelItem => item.Customer.CustomerID)
+    </td>
+    <td>
+    <a asp-action="Edit" asp-route-id="@item.AccountID">Edit</a> |
+    <a asp-action="Details" asp-route-id="@item.AccountID">Details</a> |
+    <a asp-action="Delete" asp-route-id="@item.AccountID">Delete</a>
+    </td>
+    </tr>
+    }
+    </tbody>
+    </table>
+*@
+
+
+
+
+@model IEnumerable<BankingSystem.Models.Account>
 
 @{
     ViewData["Title"] = "Index";
@@ -60,6 +130,9 @@
                 AccountDate
             </th>
             <th>
+                Name
+            </th>
+            <th>
                 Kind
             </th>
             <th>
@@ -86,21 +159,31 @@
                     @Html.DisplayFor(modelItem => item.AccountDate)
                 </td>
                 <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
                     @Html.DisplayFor(modelItem => item.Kind)
                 </td>
                 <td>
+
                     @Html.DisplayFor(modelItem => item.Balance)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.InterestRate)
                 </td>
+                <td>
+                    <a asp-action="Edit" asp-controller="Accounts" asp-route-accountID="@item.AccountID">Edit</a>
+                </td>
                 @if (!ViewBag.EnableFilter)
                 {
                     <td>
-                        <a asp-action="Deposit" asp-controller="Transactions" asp-route-accountID="@item.AccountID">Deposit</a> |
-                        <a asp-action="Withdraw" asp-controller="Transactions" asp-route-accountID="@item.AccountID">Withdraw</a> |
-                        <a asp-action="AddInterest" asp-controller="Transactions" asp-route-accountID="@item.AccountID">Add Interest</a> |
-                        <a asp-action="Move" asp-controller="Transfers" asp-route-accountID="@item.AccountID">Transfer</a> |
+                        <a asp-action="Deposit" asp-controller="Transactions" asp-route-accountID="@item.AccountID">Deposit |</a>
+                        @if (item.Kind == Account.Kinds.credit)
+                        {
+                            <a asp-action="Charge" asp-controller="Transactions" asp-route-accountID="@item.AccountID">Charge |</a>
+                        }
+                        <a asp-action="Withdraw" asp-controller="Transactions" asp-route-accountID="@item.AccountID">Withdraw |</a>
+                        <a asp-action="AddInterest" asp-controller="Transactions" asp-route-accountID="@item.AccountID">Add Interest</a>
                     </td>
                 }
             </tr>

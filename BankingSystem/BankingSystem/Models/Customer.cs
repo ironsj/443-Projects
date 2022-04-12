@@ -34,5 +34,6 @@ namespace BankingSystem.Models
         //public EmailAddressAttribute? EmailAddress { get; set; }
 
         public ICollection<Account>? Accounts { get; }
+        public ICollection<Bill>? Bills { get; }
     }
 }

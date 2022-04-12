@@ -1,0 +1,191 @@
+﻿@model BankingSystem.Models.Customer
+
+@{
+    ViewData["Title"] = "GetTransfer";
+}
+
+<h1>Customer GetTransfer</h1>
+
+
+<div>
+    <h4>Customer</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CustomerID)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CustomerID)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FullName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FullName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Birthday)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Birthday)
+        </dd>
+        @*        @if (ViewBag.Accounts == true)
+            {*@
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Accounts)
+        </dt>
+        <dd class="col-sm-10">
+            <table class="table">
+                <tr>
+                    <th>Account</th>
+                    <th>Name</th>
+                    <th>Kind</th>
+                    <th>Balance</th>
+                    <th>Interest rate</th>
+                </tr>
+      
+                    @foreach (var item in Model.Accounts)
+
+                    {
+                    @if (item.Kind == Account.Kinds.checking || item.Kind == Account.Kinds.savings)
+                    {
+
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AccountID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Kind)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Balance)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.InterestRate)
+                            </td>
+
+                            <td>
+                             
+                                    @if (item.AccountID != (int)@ViewData["ToAccountID"])
+                                    {
+
+                                        <a asp-action="Move"
+                           asp-controller="Transfers"
+                           asp-route-accountID="@item.AccountID"
+                           asp-route-toAccountID="@ViewBag.ToAccountID"
+                           asp-route-amount="@ViewBag.Payment">Transfer from</a>
+                                    }
+                               
+
+                            </td>
+
+                        </tr>
+                    }  
+                }
+
+
+  
+                    @foreach (var item in Model.Accounts)
+
+                    {
+                    @if (@item.Kind == Account.Kinds.credit || @item.Kind == Account.Kinds.debit)
+                    {
+
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AccountID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Kind)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Balance)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.InterestRate)
+                            </td>
+
+                            <td>
+                                      @if (@ViewBag.Filter > 2)
+                                
+                                    @if (item.AccountID != (int)@ViewData["ToAccountID"])
+                                    {
+
+                                        <a asp-action="Move"
+                           asp-controller="Transfers"
+                           asp-route-accountID="@item.AccountID"
+                           asp-route-toAccountID="@ViewBag.ToAccountID"
+                           asp-route-amount="@ViewBag.Payment">Transfer from</a>
+                                    }
+                                
+
+                                
+                            </td>
+
+                        </tr>
+                    }
+                }
+
+                    @foreach (var item in Model.Accounts)
+
+                    {
+                    @if (@item.Kind == Account.Kinds.bill || @item.Kind == Account.Kinds.other)
+                    {
+
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AccountID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Kind)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Balance)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.InterestRate)
+                            </td>
+
+                            <td>
+                                @if (@ViewBag.Filter > 3)
+                                
+                                    @if (item.AccountID != (int)@ViewData["ToAccountID"])
+                                    {
+
+                                        <a asp-action="Move"
+                           asp-controller="Transfers"
+                           asp-route-accountID="@item.AccountID"
+                           asp-route-toAccountID="@ViewBag.ToAccountID"
+                           asp-route-amount="@ViewBag.Payment">Transfer from</a>
+                                    }
+                             
+
+
+                            </td>
+
+                        </tr>
+                    }
+
+                }
+  
+
+
+            </table>
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-action="Index">Back to Customers Index</a>
+</div>
+
+

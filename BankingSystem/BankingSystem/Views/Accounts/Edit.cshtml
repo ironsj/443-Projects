@@ -20,8 +20,13 @@
             </div>
             <div class="form-group">
                 <label asp-for="AccountDate" class="control-label"></label>
-                <input asp-for="AccountDate" class="form-control" />
+                <input asp-for="AccountDate" type="date"class="form-control" />
                 <span asp-validation-for="AccountDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Kind" class="control-label"></label>

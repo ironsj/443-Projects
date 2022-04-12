@@ -8,19 +8,36 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BankingSystem.Data;
 using BankingSystem.Models;
+using BankingSystem.Services;
 
 namespace BankingSystem.Controllers
 {
     public class TransactionsController : Controller
     {
         private readonly BankingSystemContext _context;
+        private readonly IBankService _bankService;
 
-        public TransactionsController(BankingSystemContext context)
+        /// <summary>
+        /// 
+        /// Dependency injection
+        /// See the program class for registering the BankService
+        /// 
+        /// </summary>
+        /// <param name="bankService"></param>
+        /// <param name="context"></param>
+        public TransactionsController(IBankService bankService, BankingSystemContext context)
         {
+            _bankService = bankService;
             _context = context;
         }
 
 
+        // GET: Transactions
+        //public async Task<IActionResult> Index()
+        //{
+        //    var bankingSystemContext = _context.Transactions.Include(t => t.Account);
+        //    return View(await bankingSystemContext.ToListAsync());
+        //}
         /// <param name="sortOrder"></param>
         /// <param name="currentFilter"></param>
         /// <param name="searchString"></param>
@@ -31,8 +48,11 @@ namespace BankingSystem.Controllers
             string searchString,
             bool? enableFilter)
         {
+            ViewData["CurrentSort"] = sortOrder;
             ViewData["SortByAccount"] = String.IsNullOrEmpty(sortOrder) ? "account_descinding" : "";
             ViewData["SortByCustomer"] = sortOrder == "Customer" ? "customer_descinding" : "Customer";
+
+            //  ViewData["EnableFilter"] = enableFilter;
 
             if (enableFilter == null)
             {
@@ -83,16 +103,16 @@ namespace BankingSystem.Controllers
 
 
         // GET: Transactions/Details/5
-        public async Task<IActionResult> Details(int? transactionID)
+        public async Task<IActionResult> Details(int? id)
         {
-            if (transactionID == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
             var transaction = await _context.Transactions
                 .Include(t => t.Account)
-                .FirstOrDefaultAsync(m => m.TransactionID == transactionID);
+                .FirstOrDefaultAsync(m => m.TransactionID == id);
             if (transaction == null)
             {
                 return NotFound();
@@ -104,7 +124,7 @@ namespace BankingSystem.Controllers
         // GET: Transactions/Create
         public IActionResult Create()
         {
-            ViewData["AccountID"] = new SelectList(_context.Set<Account>(), "AccountID", "AccountID");
+            ViewData["AccountID"] = new SelectList(_context.Accounts, "AccountID", "AccountID");
             return View();
         }
 
@@ -121,24 +141,24 @@ namespace BankingSystem.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AccountID"] = new SelectList(_context.Set<Account>(), "AccountID", "AccountID", transaction.AccountID);
+            ViewData["AccountID"] = new SelectList(_context.Accounts, "AccountID", "AccountID", transaction.AccountID);
             return View(transaction);
         }
 
         // GET: Transactions/Edit/5
-        public async Task<IActionResult> Edit(int? transactionID)
+        public async Task<IActionResult> Edit(int? id)
         {
-            if (transactionID == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var transaction = await _context.Transactions.FindAsync(transactionID);
+            var transaction = await _context.Transactions.FindAsync(id);
             if (transaction == null)
             {
                 return NotFound();
             }
-            ViewData["AccountID"] = new SelectList(_context.Set<Account>(), "AccountID", "AccountID", transaction.AccountID);
+            ViewData["AccountID"] = new SelectList(_context.Accounts, "AccountID", "AccountID", transaction.AccountID);
             return View(transaction);
         }
 
@@ -147,9 +167,9 @@ namespace BankingSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int transactionID, [Bind("TransactionID,AccountID,TimeSlot,Action,Amount,NewBalance")] Transaction transaction)
+        public async Task<IActionResult> Edit(int id, [Bind("TransactionID,AccountID,TimeSlot,Action,Amount,NewBalance")] Transaction transaction)
         {
-            if (transactionID != transaction.TransactionID)
+            if (id != transaction.TransactionID)
             {
                 return NotFound();
             }
@@ -174,21 +194,21 @@ namespace BankingSystem.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AccountID"] = new SelectList(_context.Set<Account>(), "AccountID", "AccountID", transaction.AccountID);
+            ViewData["AccountID"] = new SelectList(_context.Accounts, "AccountID", "AccountID", transaction.AccountID);
             return View(transaction);
         }
 
         // GET: Transactions/Delete/5
-        public async Task<IActionResult> Delete(int? transactionID)
+        public async Task<IActionResult> Delete(int? id)
         {
-            if (transactionID == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
             var transaction = await _context.Transactions
                 .Include(t => t.Account)
-                .FirstOrDefaultAsync(m => m.TransactionID == transactionID);
+                .FirstOrDefaultAsync(m => m.TransactionID == id);
             if (transaction == null)
             {
                 return NotFound();
@@ -200,9 +220,9 @@ namespace BankingSystem.Controllers
         // POST: Transactions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int transactionID)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var transaction = await _context.Transactions.FindAsync(transactionID);
+            var transaction = await _context.Transactions.FindAsync(id);
             _context.Transactions.Remove(transaction);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -214,7 +234,7 @@ namespace BankingSystem.Controllers
         }
 
         /// <summary>
-        /// Deposits into the account with primary key accountID. This action is comparable to the Create method.
+        /// Deposit into an account, with primary key accountID, is comparable to the Create parameterless action method
         /// </summary>
         /// <param name="accountID"></param>
         /// <returns></returns>
@@ -234,20 +254,18 @@ namespace BankingSystem.Controllers
         {
             if (transaction != null)
             {
-                // Identifies the account into which to make the deposit
+                // Identify the account
                 int accountID = transaction.AccountID;
                 Account account = _context.Accounts
                     .FirstOrDefault(m => m.AccountID == accountID);
 
-                // Updates the account balance, etc. in the context
+                // Updates the account Balance in the context and updates the Transaction.
                 account.Balance += (Decimal)transaction.Amount;
-                transaction.NewBalance = account.Balance;
-                transaction.TimeSlot = System.DateTime.Now;
-                transaction.Action = Transaction.Actions.deposit;
+                _bankService.Update(Transaction.Actions.deposit, account, transaction);
 
                 if (ModelState.IsValid)
                 {
-                    // Adds the modified tranaction parameter to the context and updates the database
+                    // Adds the modified tranaction parameter to the context and update the database
                     _context.Transactions.Add(transaction);
                     await _context.SaveChangesAsync().ConfigureAwait(true);
                 }
@@ -257,25 +275,22 @@ namespace BankingSystem.Controllers
             return NotFound();
         }
 
+
+
         /// <summary>
         /// 
-        /// Withdraws from the account with primary key accountID. This action is comparable to the Create method.
+        /// Withdraw from an account, with primary key accountID, is comparable to the Create parameterless action method
         /// 
         /// </summary>
         /// <param name="accountID"></param>
         /// <returns></returns>
         public async Task<IActionResult> Withdraw(int accountID)
         {
-
-            // fix this with 4 lines of code
             Account account = _context.Accounts.Find(accountID);
 
+            ViewData["AccountID"] = accountID;
             ViewData["CustomerID"] = account.CustomerID;
             ViewData["Balance"] = account.Balance;
-            ViewData["AccountID"] = accountID;
-
-            // fix the Razor code in the Withdraw View , whoch should be similar to that for the Deposit View.
-
             return View();
         }
 
@@ -284,36 +299,29 @@ namespace BankingSystem.Controllers
         /// </summary>
         /// <param name="transaction"></param>
         /// <returns></returns>
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Withdraw([Bind("AccountID,Amount")] Transaction transaction)
         {
             if (transaction != null)
             {
-                // Fix this with code similar to Deposit.  If the transaction amount is greater that the account balance, no changes are to be made.
-                // Identifies the account into which to make the withdrawal
+                // Identifies the account via
                 int accountID = transaction.AccountID;
-                Account account = _context.Accounts
-                    .FirstOrDefault(m => m.AccountID == accountID);
-
-                // Updates the account balance, etc. in the context
-                if(account.Balance >= transaction.Amount)
+                Account account = _context.Accounts.FirstOrDefault(m => m.AccountID == accountID);
+                if (transaction.Amount < account.Balance || account.Kind == BankingSystem.Models.Account.Kinds.credit)
                 {
+                    // Updates the account Balance in the context and updates the Transaction.
                     account.Balance -= (Decimal)transaction.Amount;
-                    transaction.NewBalance = account.Balance;
-                    transaction.TimeSlot = System.DateTime.Now;
-                    transaction.Action = Transaction.Actions.withdraw;
+                    _bankService.Update(Transaction.Actions.withdraw, account, transaction);
 
                     if (ModelState.IsValid)
                     {
-                        // Adds the modified tranaction parameter to the context and updates the database
+                        // Adds the modified tranaction parameter to the context and update the database
                         _context.Transactions.Add(transaction);
                         await _context.SaveChangesAsync().ConfigureAwait(true);
                     }
                 }
-                
-
-                
                 return RedirectToAction(nameof(Index), "Accounts", new { searchString = account.AccountID, enableFilter = false, customerID = account.CustomerID });
             }
 
@@ -322,24 +330,77 @@ namespace BankingSystem.Controllers
 
         /// <summary>
         /// 
-        /// Adds interest to the account with primary key accountID. This action is comparable to the Create method.
+        /// Withdraw from an account, with primary key accountID, is comparable to the Create parameterless action method
+        /// 
+        /// </summary>
+        /// <param name="accountID"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Charge(int accountID)
+        {
+            Account account = _context.Accounts.Find(accountID);
+
+            ViewData["AccountID"] = accountID;
+            ViewData["CustomerID"] = account.CustomerID;
+            ViewData["Balance"] = account.Balance;
+            return View();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="transaction"></param>
+        /// <returns></returns>
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Charge([Bind("AccountID,Amount")] Transaction transaction)
+        {
+            if (transaction != null)
+            {
+                // Identifies the account via
+                int accountID = transaction.AccountID;
+                Account account = _context.Accounts.FirstOrDefault(m => m.AccountID == accountID);
+
+                // Updates the account Balance in the context and updates the Transaction.
+                account.Balance -= (Decimal)transaction.Amount;
+                _bankService.Update(Transaction.Actions.withdraw, account, transaction);
+
+                if (ModelState.IsValid)
+                {
+                    // Adds the modified tranaction parameter to the context and update the database
+                    _context.Transactions.Add(transaction);
+                    await _context.SaveChangesAsync().ConfigureAwait(true);
+                }
+
+                return RedirectToAction(nameof(Index), "Accounts", new { searchString = account.AccountID, enableFilter = false, customerID = account.CustomerID });
+            }
+
+            return NotFound();
+        }
+
+
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         public async Task<IActionResult> AddInterest(int accountID)
         {
+
             var account = await _context.Accounts
                          .FirstOrDefaultAsync(m => m.AccountID == accountID)
                          .ConfigureAwait(true);
 
-            decimal transactionAmount = account.Balance * (Decimal)account.InterestRate; ;
 
             ViewData["CustomerID"] = account.CustomerID;
-            ViewData["AccountID"] = accountID;
-            ViewData["PreviousBalance"] = ((double)account.Balance).ToString("C");
             ViewData["InterestRate"] = account.InterestRate.ToString("P");
+
+            // transaction.Amount = transaction.Account.Balance * (Decimal)transaction.Account.InterestRate; // Don't change it !!!
+            decimal transactionAmount = account.Balance * (Decimal)account.InterestRate; ;
+            ViewData["PreviousBalance"] = ((double)account.Balance).ToString("C");
             ViewData["Interest"] = transactionAmount.ToString("C");
+            ViewData["AccountID"] = accountID;
             ViewData["PostBalance"] = (((double)account.Balance) + ((double)transactionAmount)).ToString("C");
 
             return View();
@@ -350,9 +411,9 @@ namespace BankingSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddInterest([Bind("AccountID,Amount")] Transaction transaction)
         {
+            // Identifies the account via the transaction parameter.
             if (transaction != null)
             {
-                // Identifies the account for the transaction
                 int accountID = transaction.AccountID;
                 Account account = _context.Accounts.FirstOrDefault(m => m.AccountID == accountID);
 
@@ -361,16 +422,16 @@ namespace BankingSystem.Controllers
                     return NotFound();
                 }
 
-                // Updates the account balance, etc. in the context
+                // Assigns the transaction Amount
                 transaction.Amount = account.Balance * account.InterestRate;
-                account.Balance *= 1 + account.InterestRate;
-                transaction.NewBalance = account.Balance;
-                transaction.TimeSlot = System.DateTime.Now;
-                transaction.Action = Transaction.Actions.interest;
+
+                // Updates the account Balance in the context and updates the Transaction.
+                account.Balance += (Decimal)transaction.Amount;
+                _bankService.Update(Transaction.Actions.interest, account, transaction);
 
                 if (ModelState.IsValid)
                 {
-                    // Adds the modified transaction to the context and updates the database
+                    // Adds the modified tranaction parameter to the context and update the database
                     _context.Transactions.Add(transaction);
                     await _context.SaveChangesAsync().ConfigureAwait(true);
                 }
@@ -379,6 +440,6 @@ namespace BankingSystem.Controllers
 
             return NotFound();
         }
-
     }
 }
+

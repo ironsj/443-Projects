@@ -36,8 +36,9 @@ namespace BankingSystem.Controllers
             string currentFilter,
             string searchString,
             bool? enableFilter,
-            int?  customerID )
+            int? customerID)
         {
+
             ViewData["SortByAccount"] = String.IsNullOrEmpty(sortOrder) ? "account_descinding" : "";
             ViewData["SortByCustomer"] = sortOrder == "Customer" ? "customer_descinding" : "Customer";
             ViewData["CustomerID"] = customerID;
@@ -97,16 +98,16 @@ namespace BankingSystem.Controllers
 
 
         // GET: Accounts/Details/5
-        public async Task<IActionResult> Details(int? accountID)
+        public async Task<IActionResult> Details(int? id)
         {
-            if (accountID == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
             var account = await _context.Accounts
                 .Include(a => a.Customer)
-                .FirstOrDefaultAsync(m => m.AccountID == accountID);
+                .FirstOrDefaultAsync(m => m.AccountID == id);
             if (account == null)
             {
                 return NotFound();
@@ -115,10 +116,11 @@ namespace BankingSystem.Controllers
             return View(account);
         }
 
+
         // GET: Accounts/Create/customerID
         public IActionResult Create(int? customerID)
         {
-            System.Collections.IList collection = new System.Collections.ArrayList() { "checking", "savings" };
+            System.Collections.IList collection = new System.Collections.ArrayList() { "checking", "savings", "credit", "debit", "bill", "other" };
             ViewData["CustomerID"] = customerID;
             ViewData["Kind"] = new SelectList(collection, "checking");
             return View();
@@ -129,7 +131,7 @@ namespace BankingSystem.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AccountID,CustomerID,AccountDate,Kind,Balance,InterestRate")] Account account)
+        public async Task<IActionResult> Create([Bind("AccountID,CustomerID,AccountDate,Name,Kind,Balance,InterestRate")] Account account)
         {
             if (ModelState.IsValid)
             {
@@ -139,7 +141,7 @@ namespace BankingSystem.Controllers
                 _context.Accounts.Add(account);                              // _context.Add(account);
                 await _context.SaveChangesAsync().ConfigureAwait(true);     // await _context.SaveChangesAsync();
 
-               
+
                 /********************************************************************************************
                  *
                  * The following code creates an initial Transaction, an Action for a deposit, to initialize
@@ -186,7 +188,7 @@ namespace BankingSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int accountID, [Bind("AccountID,CustomerID,AccountDate,Kind,Balance,InterestRate")] Account account)
+        public async Task<IActionResult> Edit(int accountID, [Bind("AccountID,CustomerID,AccountDate,Name,Kind,Balance,InterestRate")] Account account)
         {
             if (accountID != account.AccountID)
             {
@@ -251,5 +253,7 @@ namespace BankingSystem.Controllers
         {
             return _context.Accounts.Any(e => e.AccountID == id);
         }
+
+
     }
 }

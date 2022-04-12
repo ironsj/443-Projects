@@ -1,7 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using BankingSystem.Data;
+
+using BankingSystem.Services;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<IBankService, BankService>();        // BankService added 3/07/2022  L J Kotman
 
 builder.Services.AddDbContext<BankingSystemContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BankingSystemContext")));

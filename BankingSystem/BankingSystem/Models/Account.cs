@@ -9,21 +9,22 @@ namespace BankingSystem.Models
     {
         public enum Kinds
         {
-            checking, savings
+            checking, savings, credit, debit, bill, other
         }
 
         public int AccountID { get; set; }
         public int CustomerID { get; set; }
         #region
         [DataType(DataType.DateTime)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm tt}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [Display(Name = "Transaction time")]
         #endregion
         public DateTime AccountDate { get; set; }
+        public string? Name { get; set; }
         public Kinds? Kind { get; set; }
         #region
         [Required]
-        [Range(0.00, double.MaxValue,
+        [Range(double.MinValue, double.MaxValue,
              ErrorMessage = "Please enter a positive price")]
         [DataType(DataType.Currency)]
         [Column(TypeName = "decimal(18, 2)")]

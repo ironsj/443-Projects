@@ -10,7 +10,7 @@ namespace BankingSystem.Data
 {
     public class BankingSystemContext : DbContext
     {
-        public BankingSystemContext(DbContextOptions<BankingSystemContext> options)
+        public BankingSystemContext (DbContextOptions<BankingSystemContext> options)
             : base(options)
         {
         }
@@ -18,6 +18,8 @@ namespace BankingSystem.Data
         public DbSet<BankingSystem.Models.Customer> Customers { get; set; }
 
         public DbSet<BankingSystem.Models.Account> Accounts { get; set; }
+
+        public DbSet<BankingSystem.Models.Bill> Bills { get; set; }
 
         public DbSet<BankingSystem.Models.Transaction> Transactions { get; set; }
 
@@ -27,9 +29,9 @@ namespace BankingSystem.Data
         {
             modelBuilder.Entity<Account>().ToTable("Account");
             modelBuilder.Entity<Customer>().ToTable("Customer");
+            modelBuilder.Entity<Bill>().ToTable("Bill");
             modelBuilder.Entity<Transaction>().ToTable("Transaction");
             modelBuilder.Entity<Transfer>().ToTable("Transfer");
         }
-
     }
 }

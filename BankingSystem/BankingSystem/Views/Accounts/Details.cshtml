@@ -17,6 +17,12 @@
             @Html.DisplayFor(model => model.AccountDate)
         </dd>
         <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Kind)
         </dt>
         <dd class = "col-sm-10">
@@ -43,6 +49,6 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-accountID="@Model?.AccountID">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model?.AccountID">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

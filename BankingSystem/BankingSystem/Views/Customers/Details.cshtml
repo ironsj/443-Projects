@@ -1,4 +1,49 @@
-﻿
+﻿@*@model BankingSystem.Models.Customer
+
+    @{
+    ViewData["Title"] = "Details";
+    }
+
+    <h1>Details</h1>
+
+    <div>
+    <h4>Customer</h4>
+    <hr />
+    <dl class="row">
+    <dt class = "col-sm-2">
+    @Html.DisplayNameFor(model => model.LastName)
+    </dt>
+    <dd class = "col-sm-10">
+    @Html.DisplayFor(model => model.LastName)
+    </dd>
+    <dt class = "col-sm-2">
+    @Html.DisplayNameFor(model => model.FirstName)
+    </dt>
+    <dd class = "col-sm-10">
+    @Html.DisplayFor(model => model.FirstName)
+    </dd>
+    <dt class = "col-sm-2">
+    @Html.DisplayNameFor(model => model.Birthday)
+    </dt>
+    <dd class = "col-sm-10">
+    @Html.DisplayFor(model => model.Birthday)
+    </dd>
+    <dt class = "col-sm-2">
+    @Html.DisplayNameFor(model => model.Email)
+    </dt>
+    <dd class = "col-sm-10">
+    @Html.DisplayFor(model => model.Email)
+    </dd>
+    </dl>
+    </div>
+    <div>
+    <a asp-action="Edit" asp-route-id="@Model?.CustomerID">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+    </div>
+*@
+
+
+
 
 @model BankingSystem.Models.Customer
 
@@ -7,6 +52,7 @@
 }
 
 <h1>Customer Details</h1>
+
 <p>
     <a asp-action="Create"
        asp-controller="Accounts"
@@ -35,7 +81,8 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Birthday)
         </dd>
-
+        @*        @if (ViewBag.Accounts == true)
+            {*@
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Accounts)
         </dt>
@@ -43,53 +90,305 @@
             <table class="table">
                 <tr>
                     <th>Account</th>
+                    <th>Name</th>
                     <th>Kind</th>
                     <th>Balance</th>
                     <th>Interest rate</th>
                 </tr>
                 @foreach (var item in Model.Accounts)
                 {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.AccountID)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Kind)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Balance)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.InterestRate)
-                        </td>
-                        <td>
-                            <a asp-action="Index"
-                               asp-controller="Accounts"
-                               asp-route-searchString="@item.AccountID"
-                               asp-route-enableFilter="@false"
-                               asp-route-customerID= "@item.CustomerID">Transaction</a> |
+                    @if (@item.Kind == Account.Kinds.checking || @item.Kind == Account.Kinds.savings)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AccountID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Kind)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Balance)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.InterestRate)
+                            </td>
+                            <td>
+                                @if (@item.Kind == Account.Kinds.checking || @item.Kind == Account.Kinds.savings)
+                                {
+                                    <a asp-action="Index"
+                           asp-controller="Accounts"
+                           asp-route-searchString="@item.AccountID"
+                           asp-route-enableFilter="@false"
+                           asp-route-customerID="@item.CustomerID">Transaction</a>
+                                }
+                                @if (@item.Kind == Account.Kinds.credit)
+                                {
+                                    <a asp-action="Create"
+                           asp-controller="Bills"
+                           asp-route-accountID="@item.AccountID"
+                           asp-route-customerID="@Model.CustomerID"
+                           asp-route-name=@item.Name>Create bill</a>
 
-                            <a asp-action="Move"
-                               asp-controller="Transfers"
-                               asp-route-accountID="@item.AccountID">Transfer</a> |
+ @*                                   if (@item.Balance < 0)
+                                    {
+                                        <a asp-action="GetTransfer"
+                           asp-controller="Customers"
+                           asp-route-toAccountID="@item.AccountID"
+                           asp-route-customerID="@Model.CustomerID"> | Make Payment</a>
+                                    }*@
+                                }
+                                else
+                                {
+                                    <a asp-action="GetTransfer"
+                           asp-controller="Customers"
+                           asp-route-toAccountID="@item.AccountID"
+                           asp-route-customerID="@Model.CustomerID"> | Get Transfer</a>
+                                }
+                                <a asp-action="Index"
+                           asp-controller="Transactions"
+                           asp-route-searchString="@item.AccountID"
+                           asp-route-enableFilter="@false"> | Transactions</a>
 
-                            <a asp-action="Index"
-                               asp-controller="Transactions"
-                               asp-route-searchString="@item.AccountID"
-                               asp-route-enableFilter="@false">Transactions</a> |
+                                <a asp-action="Index"
+                           asp-controller="Transfers"
+                           asp-route-searchString="@item.AccountID"
+                           asp-route-enableFilter="@false"> | Transfers</a>
 
-                            <a asp-action="Index"
-                               asp-controller="Transfers"
-                               asp-route-searchString="@item.AccountID"
-                               asp-route-enableFilter="@false">Transfers</a>
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
+                    }
+                }
+
+                @foreach (var item in Model.Accounts)
+                {
+                    @if (@item.Kind == Account.Kinds.credit || @item.Kind == Account.Kinds.debit)
+                    {
+
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AccountID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Kind)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Balance)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.InterestRate)
+                            </td>
+                            <td>
+                                @if (@item.Kind == Account.Kinds.debit)
+                                {
+                                    <a asp-action="GetTransfer"
+                           asp-controller="Customers"
+                           asp-route-toAccountID="@item.AccountID"
+                           asp-route-customerID="@Model.CustomerID">Get Transfer</a>
+                                }
+
+                                @if (@item.Kind == Account.Kinds.credit)
+                                {
+                                    <a asp-action="Create"
+                           asp-controller="Bills"
+                           asp-route-accountID="@item.AccountID"
+                           asp-route-customerID="@Model.CustomerID"
+                           asp-route-name=@item.Name>Create bill</a>
+                                }
+
+ @*                               @if (item.Balance < 0)
+                                {
+                                    <a asp-action="GetTransfer"
+                           asp-controller="Customers"
+                           asp-route-toAccountID="@item.AccountID"
+                           asp-route-customerID="@Model.CustomerID"> | Make Payment</a>
+                                }*@
+
+                                <a asp-action="Index"
+                           asp-controller="Transactions"
+                           asp-route-searchString="@item.AccountID"
+                           asp-route-enableFilter="@false"> | Transactions </a>
+
+                                <a asp-action="Index"
+                           asp-controller="Transfers"
+                           asp-route-searchString="@item.AccountID"
+                           asp-route-enableFilter="@false"> | Transfers</a>
+
+                            </td>
+                        </tr>
+                    }
+                }
+
+
+                @foreach (var item in Model.Accounts)
+                {
+                    @if (@item.Kind == Account.Kinds.bill || @item.Kind == Account.Kinds.other)
+                    {
+
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AccountID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Kind)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Balance)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.InterestRate)
+                            </td>
+                            <td>
+
+                                @if (@item.Kind == Account.Kinds.bill)
+                                {
+                                    <a asp-action="Create"
+                           asp-controller="Bills"
+                           asp-route-accountID="@item.AccountID"
+                           asp-route-customerID="@Model.CustomerID"
+                           asp-route-name=@item.Name>Create bill</a>
+
+ @*                                   if (@item.Balance < 0)
+                                    {
+                                        <a asp-action="GetTransfer"
+                           asp-controller="Customers"
+                           asp-route-toAccountID="@item.AccountID"
+                           asp-route-customerID="@Model.CustomerID"> | Make Payment</a>
+                                    }*@
+                                }
+
+                                <a asp-action="Index"
+                           asp-controller="Transactions"
+                           asp-route-searchString="@item.AccountID"
+                           asp-route-enableFilter="@false"> | Transactions </a>
+
+                                @*         <a asp-action="Index"
+                                    asp-controller="Transfers"
+                                    asp-route-searchString="@item.AccountID"
+                                    asp-route-enableFilter="@false"> | Transfers</a>
+
+                                    </td>*@
+                        </tr>
+                    }
+                }
+
+            </table>
+        </dd>
+</div>
+
+<div>
+    <a asp-action="Details"
+       asp-controller="Customers"
+       asp-route-customerID="@Model.CustomerID"
+       asp-route-bills="true"
+       asp-route-allBills="false"
+       asp-action="Index">Unpaid Bills |</a>
+
+    <a asp-action="Details"
+       asp-controller="Customers"
+       asp-route-customerID="@Model.CustomerID"
+       asp-route-bills="true"
+       asp-route-allBills=true
+       asp-action="Index">Paid Bills | </a>
+
+    <a asp-action="Details"
+       asp-controller="Customers"
+       asp-route-customerID="@Model.CustomerID"
+       asp-route-bills="false"
+       asp-action="Index">Hide Bills</a>
+
+</div>
+<div>
+    @if (@ViewBag.Bills)
+    {
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Bills)
+        </dt>
+        <dd class="col-sm-10">
+            <table class="table">
+                <tr>
+                    <th>Bill</th>
+                    <th>Creditor</th>
+                    <th>AmountDue</th>
+                    <th>DueDate</th>
+                    <th>Paid</th>
+                    <th>PaidDate</th>
+                    <th>ConfirmationNumber</th>
+                    <th>Account</th>
+                    <th>Payer</th>
+                </tr>
+                @foreach (var item in Model.Bills)
+                {
+                    @if (@ViewBag.AllBills || !item.Paid)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.BillID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Creditor)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AmountDue)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DueDate)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Paid)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DatePaid)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ConfirmationNumber)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AccountID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.PayerID)
+                            </td>
+
+                           <td>
+
+                            @if (!@item.Paid && @item.AmountDue > 0)
+                            {
+                                <a asp-action="GetTransfer"
+                                asp-controller="Customers"
+                                asp-route-toAccountID="@item.AccountID"
+                                asp-route-customerID="@Model.CustomerID"> Make Payment</a>
+                            }
+                           </td>
+
+
+                            <td>
+                                <a asp-action="Edit"
+                                asp-controller="Bills"
+                                asp-route-billID="@item.BillID"
+                                asp-route-customerID="@item.CustomerID"> | Edit</a>
+                            </td>
+                        </tr>
+                    }
                 }
             </table>
         </dd>
+    }
     </dl>
+
 </div>
+
 <div>
-    <a asp-action="Index">Back to Customers Index</a>
+    <a asp-action="Index">Back to Customers Index | </a>
+
+
 </div>
 

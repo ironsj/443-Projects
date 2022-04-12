@@ -21,6 +21,7 @@ namespace BankingSystem.Controllers
         }
 
 
+        // GET: Customers
         /// </summary>
         /// <param name="sortOrder"></param>
         /// <param name="currentFilter"></param>
@@ -31,7 +32,7 @@ namespace BankingSystem.Controllers
             string currentFilter,
             string searchString)
         {
-             
+
             ViewData["SortByName"] = String.IsNullOrEmpty(sortOrder) ? "name_descending" : "";
 
             // The following ternary toggles SortByCustomerID in the data dictionary
@@ -77,8 +78,10 @@ namespace BankingSystem.Controllers
         }
 
 
+
+
         // GET: Customers/Details/5
-        public async Task<IActionResult> Details(int? customerID)
+        public async Task<IActionResult> Details(int? customerID, bool? bills, bool? allBills, int? toAccountID, decimal? amountDue)
         {
             if (customerID == null)
             {
@@ -88,15 +91,40 @@ namespace BankingSystem.Controllers
             //Query the context for the customer with the primary key equal to the parameter customerID
             var customer = await _context.Customers
               .Include(s => s.Accounts)                    // added after scaffolding
+              .Include(b => b.Bills)
               .AsNoTracking()                              // added after scaffolding
               .FirstOrDefaultAsync(m => m.CustomerID == customerID);
+
             if (customer == null)
             {
                 return NotFound();
             }
 
+            if (bills == null)
+            {
+                ViewData["Bills"] = false;
+            }
+            else
+            {
+                ViewData["Bills"] = bills;
+            }
+
+            if (allBills == null)
+            {
+                ViewData["AllBills"] = false;
+            }
+            else
+            {
+                ViewData["AllBills"] = allBills;
+            }
+
+            ViewData["AmoutDue"] = amountDue;
+            ViewData["ToAccountID"] = toAccountID;
+
             return View(customer);
         }
+
+
 
         // GET: Customers/Create
         public IActionResult Create()
@@ -204,5 +232,64 @@ namespace BankingSystem.Controllers
         {
             return _context.Customers.Any(e => e.CustomerID == id);
         }
+
+        public async Task<IActionResult> GetTransfer(int? customerID, int? toAccountID)
+        {
+            if (customerID == null)
+            {
+                return NotFound();
+            }
+
+            //Query the context for the customer with the primary key equal to the parameter customerID
+            var customer = await _context.Customers
+              .Include(s => s.Accounts)                                 // added after scaffolding
+              .Include(b => b.Bills)                                    // added after scaffolding
+              .AsNoTracking()                                           // added after scaffolding
+              .FirstOrDefaultAsync(m => m.CustomerID == customerID);
+
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+ 
+            var toAccount = await _context.Accounts
+              .AsNoTracking()
+              .FirstOrDefaultAsync(m => m.AccountID == toAccountID);
+            if (toAccount.Balance < 0)
+            {
+                ViewData["Payment"] = (decimal)-toAccount.Balance;
+            }
+            else
+            {
+                ViewData["Payment"] = 0;
+            }
+
+            ViewData["ToAccountID"] = toAccountID;
+
+            
+            if (toAccount.Kind == Account.Kinds.checking || toAccount.Kind == Account.Kinds.savings)
+            {
+                ViewData["Filter"] = 1;
+            }
+            else if (toAccount.Kind == Account.Kinds.credit || toAccount.Kind == Account.Kinds.debit)
+
+            {
+                ViewData["Filter"] = 2;
+            }
+            else if (toAccount.Kind == Account.Kinds.bill || toAccount.Kind == Account.Kinds.other)
+
+            {
+                ViewData["Filter"] = 3;
+            }
+            else
+            {
+                ViewData["Filter"] = 0;
+            }
+
+
+            return View(customer);
+        }
+
     }
 }

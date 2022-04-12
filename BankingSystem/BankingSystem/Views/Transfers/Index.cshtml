@@ -1,4 +1,60 @@
-﻿
+﻿@*@model IEnumerable<BankingSystem.Models.Transfer>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ToAccountID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TimeSlot)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Amount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Account)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ToAccountID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TimeSlot)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Amount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Account.AccountID)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.TransferID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.TransferID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.TransferID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+*@
+
+
+
 @model IEnumerable<BankingSystem.Models.Transfer>
 
 @{
@@ -37,16 +93,12 @@
                 Amount
             </th>
             <th>
-                Balance
-            </th>
-            <th>
                 <a asp-action="Index"
                    asp-route-sortOrder="@ViewData["SortByAccount"]"
                    asp-route-currentFilter="@ViewData["CurrentFilter"]"
                    asp-route-enableFilter="@ViewBag.EnableFilter">To Acccount</a>
             </th>
-            <th>
-               
+            <th>   
                 Transfer Time
             </th>
             <th></th>
@@ -65,17 +117,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Amount)
             </td>
-           <td>
-                @Html.DisplayFor(modelItem => item.Account.Balance)
-            </td>
-
-
             <td>
                 @Html.DisplayFor(modelItem => item.ToAccountID)
             </td>
-           @* <td>
-                @Html.DisplayFor(modelItem => item.ToAccount.Balance)
-            </td>*@
             <td>
                 @Html.DisplayFor(modelItem => item.TimeSlot)
             </td>

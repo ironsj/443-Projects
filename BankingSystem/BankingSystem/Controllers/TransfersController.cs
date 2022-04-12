@@ -20,7 +20,7 @@ namespace BankingSystem.Controllers
             _context = context;
         }
 
-
+        // GET: Transfers
         /// <summary>
         /// 
         /// </summary>
@@ -35,6 +35,7 @@ namespace BankingSystem.Controllers
             string searchString,
              bool? enableFilter)
         {
+            //ViewData["CurrentSort"] = sortOrder;
             ViewData["SsortByAccount"] = String.IsNullOrEmpty(sortOrder) ? "account_descinding" : "";
             ViewData["SortByCustomer"] = sortOrder == "Customer" ? "customer_descinding" : "Customer";
 
@@ -90,17 +91,18 @@ namespace BankingSystem.Controllers
 
 
 
+
         // GET: Transfers/Details/5
-        public async Task<IActionResult> Details(int? transferID)
+        public async Task<IActionResult> Details(int? id)
         {
-            if (transferID == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
             var transfer = await _context.Transfers
                 .Include(t => t.Account)
-                .FirstOrDefaultAsync(m => m.TransferID == transferID);
+                .FirstOrDefaultAsync(m => m.TransferID == id);
             if (transfer == null)
             {
                 return NotFound();
@@ -134,14 +136,14 @@ namespace BankingSystem.Controllers
         }
 
         // GET: Transfers/Edit/5
-        public async Task<IActionResult> Edit(int? transferID)
+        public async Task<IActionResult> Edit(int? id)
         {
-            if (transferID == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var transfer = await _context.Transfers.FindAsync(transferID);
+            var transfer = await _context.Transfers.FindAsync(id);
             if (transfer == null)
             {
                 return NotFound();
@@ -155,9 +157,9 @@ namespace BankingSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int transferID, [Bind("TransferID,AccountID,ToAccountID,TimeSlot,Amount")] Transfer transfer)
+        public async Task<IActionResult> Edit(int id, [Bind("TransferID,AccountID,ToAccountID,TimeSlot,Amount")] Transfer transfer)
         {
-            if (transferID != transfer.TransferID)
+            if (id != transfer.TransferID)
             {
                 return NotFound();
             }
@@ -187,16 +189,16 @@ namespace BankingSystem.Controllers
         }
 
         // GET: Transfers/Delete/5
-        public async Task<IActionResult> Delete(int? transferID)
+        public async Task<IActionResult> Delete(int? id)
         {
-            if (transferID == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
             var transfer = await _context.Transfers
                 .Include(t => t.Account)
-                .FirstOrDefaultAsync(m => m.TransferID == transferID);
+                .FirstOrDefaultAsync(m => m.TransferID == id);
             if (transfer == null)
             {
                 return NotFound();
@@ -208,17 +210,17 @@ namespace BankingSystem.Controllers
         // POST: Transfers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int transferID)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var transfer = await _context.Transfers.FindAsync(transferID);
+            var transfer = await _context.Transfers.FindAsync(id);
             _context.Transfers.Remove(transfer);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TransferExists(int transferID)
+        private bool TransferExists(int id)
         {
-            return _context.Transfers.Any(e => e.TransferID == transferID);
+            return _context.Transfers.Any(e => e.TransferID == id);
         }
 
 
@@ -228,23 +230,13 @@ namespace BankingSystem.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<IActionResult> Move(int accountID)
+        public async Task<IActionResult> Move(int accountID, int? toAccountID, decimal? amount)
         {
-            var transaction = await _context.Accounts   //Debit
-                         .FirstOrDefaultAsync(m => m.AccountID == accountID)
-                         .ConfigureAwait(true);
-
             Account account = _context.Accounts.Find(accountID);
-            int custId = account.CustomerID;
-
-            var accounts = from s in _context.Accounts
-                           .Where(a => a.CustomerID == custId)
-                           select s;
-
-            ViewData["Balance"] = account.Balance;
+            //int custId = account.CustomerID;
             ViewData["CustomerId"] = account.CustomerID;
             ViewData["AccountID"] = accountID;
-            ViewBag.MyAccounts = new SelectList(accounts, "AccountID", "AccountID");
+            ViewData["ToAccountID"] = toAccountID;
             return View();
         }
 
@@ -256,34 +248,51 @@ namespace BankingSystem.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Move([Bind("AccountID,ToAccountID,Amount")] Transfer transfer)
+        public async Task<IActionResult> Move([Bind("AccountID,ToAccountID,Amount,AmountPaid,Paid,DatePaid,PayerID")] Transfer transfer)
         {
             if (transfer != null)
             {
-                // Identifies the account from which to transfer the transfer amount and handles the transaction with the from account
-                int accountID = transfer.AccountID;
-                Account account = _context.Accounts.FirstOrDefault(m => m.AccountID == accountID);
-                if (account.Balance < transfer.Amount)
-                {
-                    return RedirectToAction(nameof(Details), "Customers", new { customerID = account.CustomerID });
-                }
-                else
-                {
-                    account.Balance -= transfer.Amount;
-                }
+                int fromAccountID = transfer.AccountID;
+                Account fromAccount = _context.Accounts.FirstOrDefault(m => m.AccountID == fromAccountID);
+                //if (fromAccount.Balance > transfer.Amount)
+                //{
+                //    fromAccount.Balance -= transfer.Amount;
+                //}
+                //else
+                //{
+                //    return RedirectToAction(nameof(Details), "Customers", new { customerID = fromAccount.CustomerID });
+                //}
+
+                fromAccount.Balance -= transfer.Amount;
+
+                int toAccountID = (int)transfer.ToAccountID;
+
+
                 Transaction from = new Transaction()
                 {
                     AccountID = transfer.AccountID,
                     TimeSlot = System.DateTime.Now,
                     Action = Transaction.Actions.withdraw,
                     Amount = transfer.Amount,
-                    NewBalance = account.Balance
+                    NewBalance = fromAccount.Balance
                 };
                 _context.Transactions.Add(from);
 
+                // Paying a bill with a credit card creates a credit card bill.
 
-                // Identifies the account to which to transfer the transfer amount and handles the transaction with the to account
-                int toAccountID = (int)transfer.ToAccountID;
+                if (from.Account.Kind == Account.Kinds.credit)
+                {
+                    Bill bill = new Bill
+                    {
+                        CustomerID = from.Account.CustomerID,
+                        AccountID = from.AccountID,
+                        AmountDue = transfer.Amount,
+                        DueDate = System.DateTime.Now,
+                        Creditor = from.Account.Name
+                    };
+                    _context.Bills.Add(bill);
+                }
+
                 Account toAccount = _context.Accounts.FirstOrDefault(m => m.AccountID == toAccountID);
                 toAccount.Balance += transfer.Amount;
                 Transaction to = new Transaction()
@@ -297,7 +306,24 @@ namespace BankingSystem.Controllers
                 _context.Transactions.Add(to);
 
 
-                // Update the database
+                if (toAccount.Kind == Account.Kinds.credit || toAccount.Kind == Account.Kinds.bill)
+                {
+                    Bill bill = _context.Bills.FirstOrDefault(b => b.AccountID == toAccountID && !b.Paid);
+                    if (bill != null)
+                    {
+                        if (toAccount.Balance >= 0 || transfer.Amount >= bill.AmountDue)
+                        {
+                            bill.Paid = true;
+                            bill.DatePaid = DateTime.Now;
+                            bill.PayerID = from.AccountID;
+                            bill.AmountPaid = transfer.Amount;
+
+                            _context.Bills.Update(bill);
+                        }
+                    }
+                }
+
+
                 if (ModelState.IsValid)
                 {
                     transfer.TimeSlot = System.DateTime.Now;
@@ -306,10 +332,12 @@ namespace BankingSystem.Controllers
                     await _context.SaveChangesAsync()
                         .ConfigureAwait(true);
                 }
-                return RedirectToAction(nameof(Details), "Customers", new { customerID = account.CustomerID });
+                return RedirectToAction(nameof(Details), "Customers", new { customerID = fromAccount.CustomerID });
             }
             return NotFound();
         }
 
+
     }
 }
+

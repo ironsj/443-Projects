@@ -8,14 +8,14 @@ namespace BankingSystem.Models
     {
         public enum Actions
         {
-            deposit, withdraw, interest
+            deposit, withdraw, interest, charge, pay
         }
 
         public int TransactionID { get; set; }
         public int AccountID { get; set; }
         #region
         [DataType(DataType.DateTime)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm tt}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm tt}", ApplyFormatInEditMode = false)]
         [Display(Name = "Transaction time")]
         #endregion
         public DateTime? TimeSlot { get; set; }
