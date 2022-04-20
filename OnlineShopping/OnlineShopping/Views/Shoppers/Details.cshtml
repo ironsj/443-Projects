@@ -1,0 +1,63 @@
+﻿
+@model OnlineShopping.Models.Shopper
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Shopper Details</h1>
+
+<div>
+    <h4>Shopper</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FullName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FullName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+        <dd class="col-sm-10">
+            <table class="table">
+                <tr>
+                    <th>Cart</th>
+                    <th>Done</th>
+                    <th>Shopper</th>
+                </tr>
+                @foreach (var item in Model.Carts)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CartID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CheckedOut)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ShopperID)
+                        </td>
+                        <td>
+                            <a asp-action="Details"
+                            asp-controller="Carts" 
+                            asp-route-cartID="@item.CartID">View Orders</a>
+                        </td>
+                    </tr>
+                }
+            </table>
+        </dd>
+
+    </dl>
+</div>
+<div>
+    <a asp-action="Create" 
+    asp-controller="Carts" 
+    asp-route-shopperID="@Model.ShopperID">Continue Shopping - New Cart</a> |
+    <a asp-action="Index">Back to Shoppers</a>
+</div>

@@ -1,0 +1,81 @@
+﻿
+@model IEnumerable<OnlineShopping.Models.Cart>
+
+@{
+    ViewData["Title"] = "Carts Index";
+}
+
+<h1>Carts Index</h1>
+
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by Date, e.g. 3/30/2022: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Cart
+            </th>
+            <th>
+                TimeSlot
+            </th>
+            <th>
+                Subtotal
+            </th>
+            <th>
+                Tax
+            </th>
+            <th>
+                TotalCost
+            </th>
+            <th>
+                Done
+            </th>
+            <th>
+                Shopper
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CartID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TimeSlot)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Subtotal)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Tax)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalCost)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CheckedOut)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Shopper.FullName)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-cartID="@item.CartID">Edit</a> |
+                    <a asp-action="Details" asp-route-cartID="@item.CartID">Details</a> |
+                    <a asp-action="Delete" asp-route-cartID="@item.CartID">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

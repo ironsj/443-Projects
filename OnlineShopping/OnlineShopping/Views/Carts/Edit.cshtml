@@ -1,0 +1,45 @@
+﻿
+@model OnlineShopping.Models.Cart
+
+@{
+    ViewData["Title"] = "Carts Edit | Checkout";
+}
+
+<h1>Edit Cart</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger">   </div>
+            <input type="hidden" asp-for="CartID" />
+
+            <div class="form-group">
+                <label asp-for="ShopperID" class="control-label">ShopperID:  @ViewBag.ShopperID</label>
+                <input asp-for="ShopperID" type="hidden" name="ShopperID" value=@ViewBag.ShopperID />
+            </div>
+            <div class="form-group">
+                <label asp-for="ShopperID" class="control-label">Shopper:  @ViewBag.ShopperName</label>
+            </div>
+            <div class="form-group">
+                <label asp-for="ShopperID" class="control-label">Cart total:  @ViewBag.CartTotal</label>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="CartID" class="control-label">CartID:  @ViewBag.CartID</label>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,102 @@
+﻿@model IEnumerable<OnlineShopping.Models.Product>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Products Index</h1>
+
+@{
+    Cart cart = ViewBag.cart;
+}
+
+<p>
+    <a asp-action="Create">Create Product</a>
+</p>
+
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by Name: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+</form>
+
+<table class="table">
+
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["SortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Name</a>
+            </th>
+            <th>
+                Index
+            </th>
+            <th>
+                In stock
+            </th>
+            <th>
+                UnitPrice
+            </th>
+            <th>
+                TaxRate
+            </th>
+            <th>
+                DateStamp
+            </th>
+            <th>
+                Shelf Life (days)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Available)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnitPrice)
+                </td>
+
+                <td>
+                    @if (@item.TaxRate > 0)
+                    {
+                        @Html.DisplayFor(modelItem => item.TaxRate)
+                    }
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateStamp)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ShelfLife)
+                </td>
+                <td>
+                    @if (cart != null)
+                    {
+                        //FIX THIS to create an Order !!!  route data includes: the cart, the selected product id, the product name, product available
+                        <a asp-controller="Orders" asp-action="Create"
+                   asp-route-cartID="@cart.CartID"
+                   asp-route-prodId="@item.ProductID"
+                   asp-route-prodName="@item.Name"
+                   asp-route-prodAvailable="@item.Available">Add to Cart | </a>
+                    }
+                    <a asp-action="Edit" asp-route-productID="@item.ProductID">Edit | </a>
+                    <a asp-action="Details" asp-route-productID="@item.ProductID">Details | </a>
+                    <a asp-action="Delete" asp-route-productID="@item.ProductID">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

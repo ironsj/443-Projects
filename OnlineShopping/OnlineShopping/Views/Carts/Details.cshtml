@@ -1,0 +1,153 @@
+﻿@model OnlineShopping.Models.Cart
+
+@{
+    ViewData["Title"] = "Cart Details";
+}
+
+<h1>Cart Details</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Shopper.FullName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Shopper.FullName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Shopper.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Shopper.Email)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CartID)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CartID)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TotalCost)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TotalCost)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TimeSlot)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TimeSlot)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CheckedOut)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CheckedOut)
+        </dd>
+
+        <dd class="col-sm-10">
+            <table class="table">
+                <tr>
+                     <th>ProductID</th>
+                    <th>Name</th>
+                    <th>Available</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Cost</th>
+                    <th>TaxRate</th>
+                    <th>Tax</th>
+                    <th>Total</th>
+                </tr>
+                @foreach (var item in Model.Orders)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProductID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Product.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Product.Available)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Quantity)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Product.UnitPrice)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Cost)
+                        </td>
+                        <td>
+                            @if (item.Product.TaxRate > 0)
+                            {
+                                @Html.DisplayFor(modelItem => item.Product.TaxRate)
+                            }
+                        </td>
+                        <td>
+                            @if (item.Tax > 0)
+                            {
+                                @Html.DisplayFor(modelItem => item.Tax)
+                            }
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => (item.Total))
+                        </td>
+                        <td>
+                            @if (!Model.CheckedOut)
+                            {
+                                <a asp-action="Delete" 
+                                asp-controller="Orders" 
+                                asp-route-orderID="@item.OrderID">Remove from cart |</a>
+                            }
+                            @if (!Model.CheckedOut)
+                            {
+                                <a asp-action="Edit" 
+                                asp-controller="Orders" 
+                                asp-route-orderID="@item.OrderID">Edit order</a>
+                            }
+                        </td>
+
+                    </tr>
+                }
+
+                <tfoot>
+                    <tr>
+                        <td>Totals</td>
+                        <td></td>
+                        <td></td>
+                        <td>@Model.Orders.Count</td>
+                        <td></td>
+                        <td>$@Model.Subtotal</td>
+                        <td></td>
+                        @if (@Model.Tax > 0)
+                        {
+                            <td>$@Model.Tax</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                        <td>$@Model.TotalCost</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </dd>
+    </dl>
+
+</div>
+<div>
+    <a asp-controller="Shoppers" asp-action="Details" asp-route-shopperID="@Model.ShopperID">Back to Shopper Details </a>
+
+    @if (!Model.CheckedOut)
+    {
+        <a asp-controller="Products" asp-action="Index" asp-route-cartID="@Model.CartID"> | Browse for next item </a>
+
+        <a asp-action="Edit" asp-route-cartID="@Model.CartID"> | Checkout </a>
+    }
+</div>
+
+
+

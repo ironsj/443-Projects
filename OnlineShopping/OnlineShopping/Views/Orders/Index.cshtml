@@ -1,0 +1,65 @@
+﻿
+@model IEnumerable<OnlineShopping.Models.Order>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Orders Index</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                OrderID
+            </th>
+            <th>
+                Cart
+            </th>
+            <th>
+                Product
+            </th>
+            <th>
+                Quantity
+            </th>
+            <th>
+                Cost
+            </th>
+            <th>
+                Tax
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cart.CartID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cost)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Tax)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-orderID="@item.OrderID">Edit</a> |
+                    <a asp-action="Details" asp-route-orderID="@item.OrderID">Details</a> |
+                    <a asp-action="Delete" asp-route-orderID="@item.OrderID">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
